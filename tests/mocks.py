@@ -4,16 +4,18 @@ from typing import Dict, List
 # Mock of subfeddits database
 MOCK_SUBFEDDITS = {
     "Dummy Topic 2": [
-        {"id": 1, "text": "I love this topic", "score": 0.8, "category": "positive"},
-        {"id": 2, "text": "I don't agree", "score": -0.3, "category": "negative"},
-        {"id": 3, "text": "Excellent content", "score": 0.9, "category": "positive"}
+        {"id": 1, "text": "I love this topic"},
+        {"id": 2, "text": "I don't agree"},
+        {"id": 3, "text": "Excellent content"}
     ]
 }
 
 # Mock of subfeddit service
 class MockSubfedditService:
     def get_subfeddit_id_by_name(self, name: str) -> str:
-        return "123" if name in MOCK_SUBFEDDITS else None
+        if name in MOCK_SUBFEDDITS:
+            return "123"
+        return None
 
     def get_comments_by_subfeddit_id(self, subfeddit_id: str) -> List[Dict]:
         return MOCK_SUBFEDDITS["Dummy Topic 2"]

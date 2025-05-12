@@ -2,10 +2,9 @@
 from fastapi import FastAPI, HTTPException, Depends
 from typing import List, Dict, Any, Optional
 from src.services.subfeddit_service import SubfedditService
-from src.dependencies import get_sentiment_analysis_model
+from src.dependencies import get_sentiment_analysis_model, get_subfeddit_service
 
 app = FastAPI()
-subfeddit_service = SubfedditService()
 
 @app.get('/subfeddit/analyze-comments/')
 async def get_subfeddit_comments(
@@ -13,7 +12,8 @@ async def get_subfeddit_comments(
     start_time: Optional[str] = None,
     end_time: Optional[str] = None,
     sort_by_polarity: bool = False,
-    sentiment_analysis_model = Depends(get_sentiment_analysis_model)
+    sentiment_analysis_model = Depends(get_sentiment_analysis_model),
+    subfeddit_service: SubfedditService = Depends(get_subfeddit_service)
 ) -> List[Dict[str, Any]]:
     """
     Gets and analyzes comments from a specific subfeddit.
@@ -24,6 +24,7 @@ async def get_subfeddit_comments(
         end_time (Optional[str]): End date for filtering comments
         sort_by_polarity (bool): Whether to sort comments by polarity
         sentiment_analysis_model: Dependency injected sentiment analysis model
+        subfeddit_service: Dependency injected subfeddit service
         
     Returns:
         List[Dict[str, Any]]: List of analyzed comments

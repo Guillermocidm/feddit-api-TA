@@ -1,13 +1,14 @@
 import pytest
 from fastapi.testclient import TestClient
 from src.app import app
+from src.dependencies import get_subfeddit_service
 from tests.mocks import MockSubfedditService
 
 # Configure the test client
 client = TestClient(app)
 
-# Replace the real service with the mock
-app.subfeddit_service = MockSubfedditService()
+# Replace the real services with mocks
+app.dependency_overrides[get_subfeddit_service] = lambda: MockSubfedditService()
 
 def test_get_comments():
     """
