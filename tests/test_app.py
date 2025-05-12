@@ -1,15 +1,19 @@
 import pytest
-import requests
+from fastapi.testclient import TestClient
+from src.app import app
+from tests.mocks import MockSubfedditService
 
-# Base URL for API tests
-BASE_URL = "http://localhost:5000/subfeddit/analyze-comments/"
+# Configure the test client
+client = TestClient(app)
+
+# Replace the real service with the mock
+app.subfeddit_service = MockSubfedditService()
 
 def test_get_comments():
     """
-    Test that the API returns comments correctly for a valid subfeddit.
+    Test that verifies that the API returns comments correctly for a valid subfeddit.
     """
-    params = {'name': 'Dummy Topic 2'}
-    response = requests.get(BASE_URL, params=params)
+    response = client.get("/subfeddit/analyze-comments/", params={"name": "Dummy Topic 2"})
     data = response.json()
 
     assert response.status_code == 200
@@ -25,18 +29,16 @@ def test_get_comments():
 
 def test_subfeddit_not_found():
     """
-    Test that the API returns 404 if the subfeddit does not exist.
+    Test that verifies that the API returns 404 if the subfeddit does not exist.
     """
-    params = {'name': 'AAAA'}
-    response = requests.get(BASE_URL, params=params)
+    response = client.get("/subfeddit/analyze-comments/", params={"name": "AAAA"})
     assert response.status_code == 404
-    assert response.json().get('detail') == f"{params['name']} subfeddit not found"
+    assert response.json().get('detail') == "AAAA subfeddit not found"
 
 def test_subfeddit_name_required():
     """
-    Test that the API returns 400 if the subfeddit name is not provided.
+    Test that verifies that the API returns 400 if the subfeddit name is not provided.
     """
-    params = {'name': '', 'sort_by_polarity': 'true'}
-    response = requests.get(BASE_URL, params=params)
+    response = client.get("/subfeddit/analyze-comments/", params={"name": ""})
     assert response.status_code == 400
     assert response.json().get('detail') == "Subfeddit name is required"

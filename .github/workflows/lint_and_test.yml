@@ -24,7 +24,7 @@ jobs:
 
     - name: Lint with Ruff
       run: |
-        ruff check app/
+        ruff check src/
     
     - name: Run tests with pytest
       run: |
